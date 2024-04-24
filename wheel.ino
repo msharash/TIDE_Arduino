@@ -31,11 +31,18 @@ void setup() {
   pinMode(EncoderPin, INPUT);
   pinMode(ThrottlePin, INPUT);
   pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT);
+  pinMode(LED4, OUTPUT);
+  pinMode(LED5, OUTPUT);
+  pinMode(LED6, OUTPUT);
 
   if(!CAN.begin(500E3)){
     Serial.println("Starting CAN fail");
     while(1);
   }
+
+  CAN.onReceive(onReceive);
 }
 
 void loop() {
@@ -89,4 +96,54 @@ void buttonstoCAN(){
   CAN.write(analogRead(GainDownPin));
   CAN.write(analogRead(EStopPin));
   CAN.endPacket();
+}
+
+void onReceive(int packetSize) {
+
+  if(!CAN.packetRtr()){
+    if(CAN.packetId() == 1500){
+      char data[packetSize];
+      int i = 0;
+      while (CAN.available()) {
+        data[i] = (char)CAN.read();
+        i++;
+      }
+      
+      if(data[0] == 1){
+        digitalWrite(LED1, HIGH);
+      }else{
+        digitalWrite(LED1, LOW);
+      }
+
+      if(data[1] == 1){
+        digitalWrite(LED2, HIGH);
+      }else{
+        digitalWrite(LED2, LOW);
+      }
+
+      if(data[2] == 1){
+        digitalWrite(LED3, HIGH);
+      }else{
+        digitalWrite(LED3, LOW);
+      }
+
+      if(data[3] == 1){
+        digitalWrite(LED4, HIGH);
+      }else{
+        digitalWrite(LED4, LOW);
+      }
+
+      if(data[4] == 1){
+        digitalWrite(LED5, HIGH);
+      }else{
+        digitalWrite(LED5, LOW);
+      }
+
+      if(data[5] == 1){
+        digitalWrite(LED6, HIGH);
+      }else{
+        digitalWrite(LED6, LOW);
+      }
+    }
+  }
 }
