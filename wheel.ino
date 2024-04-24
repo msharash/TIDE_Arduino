@@ -47,7 +47,6 @@ void setup() {
 
 void loop() {
   encoderVal = readEncoder();
-  Serial.print(encoderVal);
   encodertoCAN(encoderVal);
 
   throttleVal = readThrottle();
@@ -61,7 +60,7 @@ float readEncoder(){
 }
 
 float readThrottle(){
-  return (float)analogRead(ThrottlePin)*360./4095.; //Scale => [0,360]
+  return (float)analogRead(ThrottlePin)*100./4095.; //Scale => [0,100]
 }
 
 void encodertoCAN(float val){
@@ -101,16 +100,17 @@ void buttonstoCAN(){
 void onReceive(int packetSize) {
 
   if(!CAN.packetRtr()){
-    if(CAN.packetId() == 1500){
+    if(CAN.packetId() == 2001){
       char data[packetSize];
       int i = 0;
       while (CAN.available()) {
         data[i] = (char)CAN.read();
         i++;
       }
-      
+
       if(data[0] == 1){
-        digitalWrite(LED1, HIGH);
+        digitalWrite(LED1, HIGH);s
+        Serial.print("recieve yay");
       }else{
         digitalWrite(LED1, LOW);
       }
